@@ -1,0 +1,1487 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Subtitles Learning English </title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+:root {
+--bg-primary: #0a0a0a;
+--bg-secondary: #141414;
+--bg-tertiary: #1c1c1c;
+--bg-elevated: #222222;
+--text-primary: #e8e8e8;
+--text-secondary: #7a7a7a;
+--text-muted: #555555;
+--accent: #667eea;
+--accent-hover: #7b8ff0;
+--border: #2a2a2a;
+--border-light: #333333;
+--success: #38ef7d;
+--warning: #f9a825;
+--error: #eb3349;
+}
+* {
+margin: 0;
+padding: 0;
+box-sizing: border-box;
+}
+body {
+font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+background: var(--bg-primary);
+color: var(--text-primary);
+min-height: 100vh;
+padding: 20px;
+line-height: 1.6;
+}
+.container {
+max-width: 900px;
+margin: 0 auto;
+background: var(--bg-secondary);
+border: 1px solid var(--border);
+border-radius: 12px;
+overflow: hidden;
+}
+.header {
+background: var(--bg-secondary);
+border-bottom: 1px solid var(--border);
+padding: 40px;
+text-align: center;
+position: relative;
+}
+.header h1 {
+font-size: 1.8em;
+font-weight: 500;
+letter-spacing: -0.5px;
+margin-bottom: 8px;
+}
+.header p {
+font-size: 0.95em;
+color: var(--text-secondary);
+}
+.settings-btn {
+position: absolute;
+top: 20px;
+right: 20px;
+background: transparent;
+border: 1px solid var(--border);
+color: var(--text-secondary);
+width: 40px;
+height: 40px;
+border-radius: 8px;
+font-size: 1.2em;
+cursor: pointer;
+transition: all 0.2s ease;
+display: flex;
+align-items: center;
+justify-content: center;
+}
+.settings-btn:hover {
+background: var(--bg-tertiary);
+border-color: var(--border-light);
+color: var(--text-primary);
+}
+.content {
+padding: 40px;
+}
+.upload-area {
+border: 1px dashed var(--border-light);
+border-radius: 10px;
+padding: 60px 20px;
+text-align: center;
+cursor: pointer;
+transition: all 0.3s ease;
+background: var(--bg-primary);
+}
+.upload-area:hover {
+background: var(--bg-tertiary);
+border-color: var(--accent);
+}
+.upload-area.dragover {
+background: var(--bg-tertiary);
+border-color: var(--accent);
+}
+.upload-icon {
+font-size: 3.5em;
+margin-bottom: 20px;
+filter: grayscale(30%);
+}
+.upload-area p {
+font-size: 1.05em;
+color: var(--text-secondary);
+margin-bottom: 10px;
+}
+.upload-area small {
+color: var(--text-muted);
+font-size: 0.85em;
+}
+#fileInput {
+display: none;
+}
+.btn {
+display: inline-block;
+background: var(--bg-elevated);
+color: var(--text-primary);
+padding: 10px 24px;
+border-radius: 6px;
+border: 1px solid var(--border);
+font-size: 0.95em;
+cursor: pointer;
+margin-top: 20px;
+transition: all 0.2s;
+}
+.btn:hover {
+background: var(--bg-tertiary);
+border-color: var(--border-light);
+}
+.result {
+display: none;
+margin-top: 30px;
+}
+.result.show {
+display: block;
+}
+.result-header {
+display: flex;
+justify-content: space-between;
+align-items: center;
+margin-bottom: 20px;
+padding-bottom: 15px;
+border-bottom: 1px solid var(--border);
+flex-wrap: wrap;
+gap: 10px;
+}
+.result-header h2 {
+color: var(--text-primary);
+font-size: 1.3em;
+font-weight: 500;
+}
+.translate-btn {
+background: var(--bg-elevated);
+color: var(--text-primary);
+padding: 8px 18px;
+border-radius: 6px;
+border: 1px solid var(--border);
+font-size: 0.85em;
+cursor: pointer;
+transition: all 0.2s;
+font-weight: 500;
+}
+.translate-btn:hover {
+background: var(--bg-tertiary);
+border-color: var(--border-light);
+}
+.translate-btn:disabled {
+opacity: 0.5;
+cursor: not-allowed;
+}
+.download-buttons {
+display: flex;
+gap: 12px;
+margin-top: 20px;
+flex-wrap: wrap;
+}
+.download-btn {
+flex: 1;
+min-width: 200px;
+color: var(--text-primary);
+padding: 12px 20px;
+border-radius: 6px;
+border: 1px solid var(--border);
+background: var(--bg-tertiary);
+font-size: 0.95em;
+cursor: pointer;
+transition: all 0.2s ease;
+display: flex;
+align-items: center;
+justify-content: center;
+gap: 8px;
+}
+.download-btn:hover {
+background: var(--bg-elevated);
+border-color: var(--border-light);
+}
+.subtitles-container {
+display: grid;
+grid-template-columns: 1fr 1fr;
+gap: 15px;
+}
+.subtitle-panel {
+background: var(--bg-primary);
+border: 1px solid var(--border);
+border-radius: 10px;
+padding: 25px;
+max-height: 500px;
+overflow-y: auto;
+}
+.subtitle-panel-header {
+font-size: 0.75em;
+text-transform: uppercase;
+letter-spacing: 1px;
+color: var(--text-muted);
+margin-bottom: 15px;
+padding-bottom: 10px;
+border-bottom: 1px solid var(--border);
+}
+.subtitle-text {
+font-size: 17px;
+line-height: 1.8;
+color: var(--text-primary);
+white-space: pre-wrap;
+}
+.subtitle-text .word-link {
+color: var(--text-primary);
+text-decoration: none;
+border-bottom: 1px dotted var(--text-muted);
+transition: all 0.2s;
+cursor: help;
+}
+.subtitle-text .word-link:hover {
+color: var(--accent);
+border-bottom-style: solid;
+border-bottom-color: var(--accent);
+}
+.subtitle-text-plain {
+font-size: 17px;
+line-height: 1.8;
+color: var(--text-secondary);
+white-space: pre-wrap;
+}
+.stats {
+display: flex;
+gap: 15px;
+margin-top: 20px;
+flex-wrap: wrap;
+}
+.stat-box {
+flex: 1;
+min-width: 120px;
+background: var(--bg-primary);
+border: 1px solid var(--border);
+padding: 18px;
+border-radius: 8px;
+text-align: center;
+}
+.stat-box .number {
+font-size: 1.8em;
+font-weight: 500;
+margin-bottom: 4px;
+color: var(--text-primary);
+}
+.stat-box .label {
+font-size: 0.8em;
+color: var(--text-secondary);
+text-transform: uppercase;
+letter-spacing: 0.5px;
+}
+.vocabulary-section {
+margin-top: 40px;
+display: none;
+}
+.vocabulary-section.show {
+display: block;
+}
+.vocabulary-header {
+font-size: 1.3em;
+color: var(--text-primary);
+margin-bottom: 20px;
+font-weight: 500;
+}
+.vocabulary-tabs {
+display: flex;
+gap: 8px;
+margin-bottom: 20px;
+flex-wrap: wrap;
+}
+.vocab-tab {
+flex: 1;
+min-width: 140px;
+padding: 10px 18px;
+background: var(--bg-primary);
+border: 1px solid var(--border);
+border-radius: 6px;
+cursor: pointer;
+font-size: 0.9em;
+font-weight: 500;
+color: var(--text-secondary);
+transition: all 0.2s ease;
+}
+.vocab-tab:hover {
+background: var(--bg-tertiary);
+color: var(--text-primary);
+}
+.vocab-tab.active {
+background: var(--bg-elevated);
+color: var(--text-primary);
+border-color: var(--border-light);
+}
+.vocab-content {
+display: none;
+background: var(--bg-primary);
+border: 1px solid var(--border);
+padding: 20px;
+border-radius: 10px;
+max-height: 500px;
+overflow-y: auto;
+}
+.vocab-content.active {
+display: block;
+}
+.vocab-table {
+width: 100%;
+border-collapse: collapse;
+}
+.vocab-table th {
+background: var(--bg-tertiary);
+color: var(--text-secondary);
+padding: 10px 12px;
+text-align: left;
+font-weight: 500;
+font-size: 0.85em;
+text-transform: uppercase;
+letter-spacing: 0.5px;
+border-bottom: 1px solid var(--border);
+}
+.vocab-table td {
+padding: 10px 12px;
+border-bottom: 1px solid var(--border);
+color: var(--text-primary);
+}
+.vocab-table tr:last-child td {
+border-bottom: none;
+}
+.vocab-table tr:hover td {
+background: var(--bg-tertiary);
+}
+.vocab-table .count {
+text-align: center;
+font-weight: 500;
+color: var(--text-secondary);
+}
+.vocab-table .word-link {
+color: var(--text-primary);
+text-decoration: none;
+font-weight: 400;
+cursor: help;
+border-bottom: 1px dotted var(--text-muted);
+transition: all 0.2s;
+}
+.vocab-table .word-link:hover {
+color: var(--accent);
+border-bottom-style: solid;
+border-bottom-color: var(--accent);
+}
+.no-data {
+text-align: center;
+color: var(--text-muted);
+padding: 40px;
+font-style: italic;
+}
+.warning-msg {
+background: rgba(249, 168, 37, 0.08);
+border: 1px solid rgba(249, 168, 37, 0.3);
+color: var(--warning);
+padding: 12px 16px;
+border-radius: 6px;
+margin-bottom: 15px;
+font-size: 0.9em;
+}
+.error-msg {
+background: rgba(235, 51, 73, 0.08);
+border: 1px solid rgba(235, 51, 73, 0.3);
+color: var(--error);
+padding: 12px 16px;
+border-radius: 6px;
+margin-bottom: 15px;
+font-size: 0.9em;
+}
+.modal {
+display: none;
+position: fixed;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+background: rgba(0, 0, 0, 0.8);
+z-index: 1000;
+align-items: center;
+justify-content: center;
+backdrop-filter: blur(4px);
+}
+.modal.show {
+display: flex;
+}
+.modal-content {
+background: var(--bg-secondary);
+border: 1px solid var(--border);
+border-radius: 12px;
+padding: 35px;
+max-width: 550px;
+width: 90%;
+max-height: 90vh;
+overflow-y: auto;
+position: relative;
+}
+.modal-close {
+position: absolute;
+top: 15px;
+right: 15px;
+background: none;
+border: none;
+font-size: 1.8em;
+cursor: pointer;
+color: var(--text-muted);
+line-height: 1;
+}
+.modal-close:hover {
+color: var(--text-primary);
+}
+.modal h2 {
+color: var(--text-primary);
+margin-bottom: 25px;
+font-size: 1.3em;
+font-weight: 500;
+}
+.form-group {
+margin-bottom: 20px;
+}
+.form-group label {
+display: block;
+margin-bottom: 8px;
+font-weight: 500;
+color: var(--text-primary);
+font-size: 0.9em;
+}
+.form-group select,
+.form-group input {
+width: 100%;
+padding: 10px 12px;
+background: var(--bg-primary);
+border: 1px solid var(--border);
+border-radius: 6px;
+font-size: 0.95em;
+color: var(--text-primary);
+}
+.form-group select:focus,
+.form-group input:focus {
+outline: none;
+border-color: var(--accent);
+}
+.form-group select option {
+background: var(--bg-secondary);
+color: var(--text-primary);
+}
+.form-group small {
+display: block;
+margin-top: 6px;
+color: var(--text-muted);
+font-size: 0.8em;
+}
+.mode-selector {
+display: flex;
+gap: 8px;
+margin-bottom: 10px;
+}
+.mode-btn {
+flex: 1;
+padding: 12px;
+border: 1px solid var(--border);
+border-radius: 6px;
+background: var(--bg-primary);
+cursor: pointer;
+font-weight: 500;
+color: var(--text-secondary);
+transition: all 0.2s ease;
+font-size: 0.9em;
+}
+.mode-btn:hover {
+background: var(--bg-tertiary);
+color: var(--text-primary);
+}
+.mode-btn.active {
+background: var(--bg-elevated);
+color: var(--text-primary);
+border-color: var(--border-light);
+}
+.ai-config {
+display: none;
+}
+.ai-config.show {
+display: block;
+}
+.save-btn {
+width: 100%;
+padding: 12px;
+background: var(--bg-elevated);
+color: var(--text-primary);
+border: 1px solid var(--border);
+border-radius: 6px;
+font-size: 0.95em;
+font-weight: 500;
+cursor: pointer;
+margin-top: 20px;
+transition: all 0.2s;
+}
+.save-btn:hover {
+background: var(--bg-tertiary);
+border-color: var(--border-light);
+}
+.loading {
+display: none;
+text-align: center;
+padding: 40px;
+}
+.loading.show {
+display: block;
+}
+.spinner {
+border: 3px solid var(--border);
+border-top: 3px solid var(--accent);
+border-radius: 50%;
+width: 40px;
+height: 40px;
+animation: spin 1s linear infinite;
+margin: 0 auto 20px;
+}
+@keyframes spin {
+0% { transform: rotate(0deg); }
+100% { transform: rotate(360deg); }
+}
+::-webkit-scrollbar {
+width: 8px;
+height: 8px;
+}
+::-webkit-scrollbar-track {
+background: var(--bg-primary);
+}
+::-webkit-scrollbar-thumb {
+background: var(--border-light);
+border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+background: var(--text-muted);
+}
+@media (max-width: 768px) {
+.header h1 { font-size: 1.4em; }
+.content { padding: 20px; }
+.upload-area { padding: 40px 20px; }
+.subtitle-text, .subtitle-text-plain { font-size: 15px; }
+.subtitle-panel { padding: 20px; }
+.download-btn { min-width: 100%; }
+.modal-content { padding: 25px; }
+.subtitles-container {
+grid-template-columns: 1fr;
+}
+.result-header {
+flex-direction: column;
+align-items: flex-start;
+}
+}
+</style>
+</head>
+<body>
+<div class="container">
+<div class="header">
+<h1>Extractor de Subtítulos</h1>
+<p>Sube tu archivo .srt y obtén el texto limpio</p>
+<button class="settings-btn" onclick="openSettings()" title="Configuración">⚙</button>
+</div>
+<div class="content">
+<div class="upload-area" id="uploadArea">
+<div class="upload-icon"></div>
+<p>Arrastra tu archivo .srt aquí</p>
+<p>o</p>
+<button class="btn" onclick="document.getElementById('fileInput').click()">
+Seleccionar Archivo
+</button>
+<input type="file" id="fileInput" accept=".srt">
+<small style="display: block; margin-top: 20px;">Solo archivos .srt</small>
+</div>
+<div class="result" id="result">
+<div class="result-header">
+<h2>Texto Extraído</h2>
+<button class="translate-btn" id="translateBtn" onclick="translateToSpanish()">Traducir al español</button>
+</div>
+<div class="subtitles-container">
+<div class="subtitle-panel">
+<div class="subtitle-panel-header">Inglés</div>
+<div class="subtitle-text" id="subtitleText"></div>
+</div>
+<div class="subtitle-panel" id="translationPanel" style="display: none;">
+<div class="subtitle-panel-header">Español</div>
+<div class="subtitle-text-plain" id="translatedText"></div>
+</div>
+</div>
+<div class="download-buttons">
+<button class="download-btn" onclick="downloadAsMarkdown()">
+<span>Descargar como Markdown</span>
+</button>
+<button class="download-btn" onclick="downloadAsPDF()">
+<span>Descargar como PDF</span>
+</button>
+</div>
+<div class="stats">
+<div class="stat-box">
+<div class="number" id="lineCount">0</div>
+<div class="label">Líneas</div>
+</div>
+<div class="stat-box">
+<div class="number" id="wordCount">0</div>
+<div class="label">Palabras</div>
+</div>
+<div class="stat-box">
+<div class="number" id="charCount">0</div>
+<div class="label">Caracteres</div>
+</div>
+</div>
+<div class="loading" id="loading">
+<div class="spinner"></div>
+<p style="color: var(--text-secondary); font-size: 0.9em;">Analizando vocabulario...</p>
+</div>
+<div id="vocabMessages"></div>
+<div class="vocabulary-section" id="vocabularySection">
+<h2 class="vocabulary-header">Vocabulario Extraído</h2>
+<div class="vocabulary-tabs">
+<button class="vocab-tab active" onclick="showVocabTab('verbs', this)">Verbos</button>
+<button class="vocab-tab" onclick="showVocabTab('adjectives', this)">Adjetivos / Adverbios</button>
+<button class="vocab-tab" onclick="showVocabTab('phrasalVerbs', this)">Phrasal Verbs</button>
+<button class="vocab-tab" onclick="showVocabTab('items', this)">Objetos Físicos</button>
+<button class="vocab-tab" onclick="showVocabTab('slangs', this)">Slangs / Frases</button>
+</div>
+<div class="vocab-content active" id="verbs"></div>
+<div class="vocab-content" id="adjectives"></div>
+<div class="vocab-content" id="phrasalVerbs"></div>
+<div class="vocab-content" id="items"></div>
+<div class="vocab-content" id="slangs"></div>
+</div>
+</div>
+</div>
+</div>
+<div class="modal" id="settingsModal">
+<div class="modal-content">
+<button class="modal-close" onclick="closeSettings()">×</button>
+<h2>Configuración</h2>
+<div class="ai-config show" id="aiConfig">
+<div class="form-group">
+<label>Proveedor de IA</label>
+<select id="provider" onchange="updateProviderConfig()">
+<option value="openai">OpenAI</option>
+<option value="groq">Groq</option>
+<option value="openrouter">OpenRouter</option>
+<option value="deepseek">Deepseek</option>
+<option value="gemini">Gemini</option>
+<option value="custom">Personalizado</option>
+</select>
+</div>
+<div class="form-group" id="baseUrlGroup" style="display: none;">
+<label>URL Base</label>
+<input type="text" id="baseUrl" placeholder="https://api.example.com/v1">
+<small>La URL base de la API de tu proveedor</small>
+</div>
+<div class="form-group">
+<label>API Key</label>
+<input type="password" id="apiKey" placeholder="Tu API Key">
+<small>Se guardará localmente en tu navegador (una por proveedor)</small>
+</div>
+<div class="form-group">
+<label>Modelo</label>
+<input type="text" id="model" placeholder="gpt-4o-mini">
+<button type="button" class="btn" style="margin-top: 8px; padding: 8px 16px;" onclick="loadAvailableModels()">Ver modelos disponibles</button>
+<select id="modelList" style="display: none; margin-top: 8px;" onchange="selectModelFromList()"></select>
+<small id="modelListStatus"></small>
+<small>Nombre del modelo a usar (empieza a escribir para ver sugerencias)</small>
+</div>
+<div class="form-group">
+<label>Modelo de traducción (opcional)</label>
+<input type="text" id="translationModel" placeholder="Vacío = se usará el modelo principal">
+<button type="button" class="btn" style="margin-top: 8px; padding: 8px 16px;" onclick="loadAvailableModelsTranslation()">Ver modelos disponibles</button>
+<select id="modelListTranslation" style="display: none; margin-top: 8px;" onchange="selectTranslationModelFromList()"></select>
+<small id="modelListTranslationStatus"></small>
+<small>Modelo usado solo para traducir al español. Si lo dejas vacío, se usa el modelo principal configurado arriba.</small>
+</div>
+</div>
+<button class="save-btn" onclick="saveSettings()">Guardar Configuración</button>
+</div>
+</div>
+<script>
+const uploadArea = document.getElementById('uploadArea');
+const fileInput = document.getElementById('fileInput');
+const result = document.getElementById('result');
+const subtitleText = document.getElementById('subtitleText');
+const loading = document.getElementById('loading');
+const vocabularySection = document.getElementById('vocabularySection');
+const vocabMessages = document.getElementById('vocabMessages');
+let extractedText = '';
+let translatedTextContent = '';
+let config = {
+provider: 'openai',
+baseUrl: '',
+apiKey: '',
+apiKeys: {},
+model: 'gpt-4o-mini',
+translationModel: ''
+};
+const providerUrls = {
+openai: 'https://api.openai.com/v1',
+groq: 'https://api.groq.com/openai/v1',
+openrouter: 'https://openrouter.ai/api/v1',
+deepseek: 'https://api.deepseek.com',
+gemini: 'https://generativelanguage.googleapis.com/v1beta/openai'
+};
+const providerModels = {
+openai: 'gpt-4o-mini',
+groq: 'llama-3.3-70b-versatile',
+openrouter: 'openai/gpt-4o-mini',
+deepseek: 'deepseek-flash',
+gemini: 'gemini-flash-lite-latest'
+};
+// Sugerencias de modelos actuales por proveedor (se complementan con la consulta en vivo)
+const suggestedModels = {
+openai: ['gpt-4o-mini', 'gpt-4o', 'gpt-4.1-nano', 'gpt-4.1-mini', 'gpt-4.1', 'o4-mini', 'o3', 'o3-mini', 'chatgpt-4o-latest'],
+groq: ['llama-3.3-70b-versatile', 'llama-3.1-8b-instant', 'meta-llama/llama-4-scout-17b-16e-instruct', 'meta-llama/llama-4-maverick-17b-128e-instruct', 'qwen/qwen3-32b', 'mistral-saba-24b', 'gemma2-9b-it', 'deepseek-r1-distill-llama-70b'],
+openrouter: ['openai/gpt-4o-mini', 'openai/gpt-4.1-mini', 'anthropic/claude-3.7-sonnet', 'meta-llama/llama-3.3-70b-instruct', 'deepseek/deepseek-chat-v3-0324', 'qwen/qwen3-235b-a22b', 'mistralai/mistral-small-24b-512e-instruct'],
+deepseek: ['deepseek-flash', 'deepseek-v4-pro'],
+gemini: ['gemini-flash-lite-latest', 'gemini-flash-latest', 'gemini-pro-latest']
+};
+function loadConfig() {
+const saved = localStorage.getItem('srtExtractorConfig');
+if (saved) {
+config = Object.assign({}, config, JSON.parse(saved));
+if (!config.apiKeys) config.apiKeys = {};
+// Migración: si existía una clave global, se asigna a su proveedor
+if (config.apiKey && !config.apiKeys[config.provider]) {
+config.apiKeys[config.provider] = config.apiKey;
+}
+}
+}
+function getApiKey() {
+return (config.apiKeys && config.apiKeys[config.provider]) || config.apiKey || '';
+}
+uploadArea.addEventListener('dragover', (e) => {
+e.preventDefault();
+uploadArea.classList.add('dragover');
+});
+uploadArea.addEventListener('dragleave', () => {
+uploadArea.classList.remove('dragover');
+});
+uploadArea.addEventListener('drop', (e) => {
+e.preventDefault();
+uploadArea.classList.remove('dragover');
+const file = e.dataTransfer.files[0];
+if (file && file.name.endsWith('.srt')) {
+processFile(file);
+} else {
+alert('Por favor, sube un archivo .srt válido');
+}
+});
+fileInput.addEventListener('change', (e) => {
+const file = e.target.files[0];
+if (file) {
+processFile(file);
+}
+});
+function processFile(file) {
+const reader = new FileReader();
+reader.onload = async (e) => {
+const content = e.target.result;
+extractedText = extractSubtitles(content);
+translatedTextContent = '';
+document.getElementById('translationPanel').style.display = 'none';
+document.getElementById('translateBtn').disabled = false;
+document.getElementById('translateBtn').textContent = 'Traducir al español';
+displayResult(extractedText);
+await analyzeVocabulary(extractedText);
+};
+reader.readAsText(file);
+}
+function extractSubtitles(content) {
+const lines = content.split('\n');
+const subtitles = [];
+let currentSubtitle = [];
+for (let i = 0; i < lines.length; i++) {
+const line = lines[i].trim();
+if (line === '') {
+if (currentSubtitle.length > 0) {
+subtitles.push(currentSubtitle.join(' '));
+currentSubtitle = [];
+}
+continue;
+}
+if (/^\d+$/.test(line) || line.includes('-->')) {
+continue;
+}
+let cleanLine = line
+.replace(/<[^>]*>/g, '')
+.replace(/{[^}]*}/g, '')
+.replace(/\[(.*?)\]/g, '$1')
+.trim();
+if (cleanLine) {
+currentSubtitle.push(cleanLine);
+}
+}
+if (currentSubtitle.length > 0) {
+subtitles.push(currentSubtitle.join(' '));
+}
+return subtitles.join('\n');
+}
+// Antepone el número de subtítulo (1, 2, 3...) a cada bloque de texto
+function numberSubtitles(text) {
+return text.split('\n').map((p, i) => `${i + 1}. ${p.trim()}`).join('\n');
+}
+function makeWordsClickable(text) {
+let escaped = text
+.replace(/&/g, '&amp;')
+.replace(/</g, '&lt;')
+.replace(/>/g, '&gt;');
+return escaped.replace(/\b([a-zA-Z]+(?:'[a-zA-Z]+)?)\b/g, function(match) {
+const wordForSearch = encodeURIComponent(match);
+const wrUrl = `https://www.wordreference.com/es/translation.asp?tranword=${wordForSearch}`;
+return `<a href="${wrUrl}" target="_blank" rel="noopener" class="word-link" title="Clic para ver traducción en WordReference">${match}</a>`;
+});
+}
+function displayResult(text) {
+subtitleText.innerHTML = makeWordsClickable(numberSubtitles(text));
+result.classList.add('show');
+const lines = text.split('\n').filter(line => line.trim() !== '').length;
+const words = text.split(/\s+/).filter(word => word !== '').length;
+const chars = text.length;
+document.getElementById('lineCount').textContent = lines;
+document.getElementById('wordCount').textContent = words;
+document.getElementById('charCount').textContent = chars;
+}
+// ===================== TRADUCCIÓN =====================
+// Traduce únicamente con IA: usa el "Modelo de traducción" si está escrito;
+// si está vacío, usa el modelo principal configurado.
+async function translateToSpanish() {
+const btn = document.getElementById('translateBtn');
+const translationPanel = document.getElementById('translationPanel');
+const translatedTextDiv = document.getElementById('translatedText');
+translationPanel.style.display = 'block';
+if (!getApiKey()) {
+translatedTextDiv.textContent = 'Configura tu API Key en la configuración (⚙) para traducir con IA.';
+return;
+}
+btn.disabled = true;
+btn.textContent = 'Traduciendo...';
+translatedTextDiv.textContent = 'Traduciendo...';
+try {
+const chunks = splitTextIntoChunks(extractedText, 3000);
+const translatedChunks = [];
+let startLine = 1;
+for (let i = 0; i < chunks.length; i++) {
+btn.textContent = `Traduciendo con IA... (${i + 1}/${chunks.length})`;
+let translated;
+try {
+translated = await translateChunkWithAI(chunks[i], startLine);
+} catch (firstError) {
+if (!/La IA devolvió/.test(firstError.message || '')) throw firstError;
+console.warn('Reintentando este bloque con IA:', firstError);
+translated = await translateChunkWithAI(chunks[i], startLine);
+}
+translatedChunks.push(translated);
+startLine += chunks[i].split('\n').length;
+}
+translatedTextContent = translatedChunks.join('\n');
+translatedTextDiv.textContent = numberSubtitles(translatedTextContent);
+btn.textContent = 'Traducido con IA ✓';
+setTimeout(() => {
+btn.disabled = false;
+btn.textContent = 'Traducir al español';
+}, 2000);
+} catch (error) {
+console.error('Error de traducción:', error);
+const msg = error.message || '';
+let hint = '';
+if (/API error 404/.test(msg)) {
+hint = ' Revisa el nombre del modelo de traducción en la configuración (⚙) con "Ver modelos disponibles".';
+} else if (/API error (401|402)/.test(msg)) {
+hint = ' Revisa tu API Key y el saldo de tu cuenta.';
+} else if (/API error (429|500|502|503|504)/.test(msg)) {
+hint = ' El proveedor está saturado en este momento; espera unos minutos o prueba con otro modelo.';
+}
+translatedTextDiv.textContent = 'Error al traducir: ' + msg + '.' + hint + ' Intenta de nuevo.';
+btn.disabled = false;
+btn.textContent = 'Traducir al español';
+}
+}
+// fetch con reintentos automáticos cuando el proveedor está saturado (429, 500, 502, 503, 504)
+async function fetchWithRetry(url, options, retries = 3) {
+const retryable = [429, 500, 502, 503, 504];
+for (let attempt = 0; attempt <= retries; attempt++) {
+const response = await fetch(url, options);
+if (!retryable.includes(response.status) || attempt === retries) return response;
+console.warn(`El proveedor respondió ${response.status}. Reintentando (${attempt + 1}/${retries})...`);
+await new Promise(r => setTimeout(r, 3000 * (attempt + 1)));
+}
+}
+function splitTextIntoChunks(text, maxChunkSize) {
+const chunks = [];
+const paragraphs = text.split('\n');
+let currentChunk = '';
+for (const paragraph of paragraphs) {
+if (currentChunk.length + paragraph.length + 2 > maxChunkSize && currentChunk.length > 0) {
+chunks.push(currentChunk);
+currentChunk = paragraph;
+} else {
+currentChunk = currentChunk ? currentChunk + '\n' + paragraph : paragraph;
+}
+}
+if (currentChunk) {
+chunks.push(currentChunk);
+}
+return chunks;
+}
+// Traducción con IA. Modelo: el de "Modelo de traducción" si está escrito;
+// si está vacío, el modelo principal configurado (ya validado contra el proveedor).
+async function translateChunkWithAI(chunkText, startIndex) {
+const lines = chunkText.split('\n');
+const numberedInput = lines.map((l, i) => `${startIndex + i}. ${l}`).join('\n');
+const baseUrl = (config.provider === 'custom' ? config.baseUrl : providerUrls[config.provider]).replace(/\/+$/, '');
+const apiKey = getApiKey();
+let model = (config.translationModel && config.translationModel.trim())
+|| config.model
+|| providerModels[config.provider];
+if (config.provider === 'deepseek' && !['deepseek-flash', 'deepseek-v4-flash', 'deepseek-v4-pro'].includes(model.trim().toLowerCase())) {
+model = providerModels.deepseek;
+}
+if (config.provider === 'gemini' && /^gemini-(1\.|2\.)/i.test(model.trim())) {
+model = providerModels.gemini;
+}
+const systemPrompt = `You are a professional English-to-Spanish subtitle translator. Translate EVERY numbered line into natural, colloquial Latin American Spanish, keeping the informal tone, slang and personality of the original dialogue.
+
+STRICT RULES:
+- Translate ALL lines. Do NOT skip, merge, summarize or reorder any line.
+- Keep the EXACT same numbering and the EXACT same number of lines as the input.
+- Output ONLY the numbered translated lines. No comments, no explanations, no markdown fences.`;
+const response = await fetchWithRetry(`${baseUrl}/chat/completions`, {
+method: 'POST',
+headers: {
+'Content-Type': 'application/json',
+'Authorization': `Bearer ${apiKey}`
+},
+body: JSON.stringify({
+model: model,
+messages: [
+{ role: 'system', content: systemPrompt },
+{ role: 'user', content: numberedInput }
+],
+temperature: 0.3,
+...(config.provider === 'deepseek' ? { max_tokens: 4000, thinking: { type: 'disabled' } } : {})
+})
+});
+if (!response.ok) {
+const errText = await response.text();
+throw new Error(`API error ${response.status}: ${errText.substring(0, 150)}`);
+}
+const data = await response.json();
+const choice = data.choices[0];
+const raw = (choice.message.content || '').replace(/```[a-z]*\n?/gi, '').trim();
+// Extraer las líneas numeradas de la respuesta
+let parsed = [];
+raw.split('\n').forEach(line => {
+const m = line.match(/^\s*(\d+)[.)]?\s*(.*)$/);
+if (m && m[2].trim()) parsed.push(m[2].trim());
+});
+// Intento tolerante: si la IA omitió la numeración pero devolvió la misma cantidad de líneas
+if (parsed.length !== lines.length) {
+const plain = raw.split('\n').map(l => l.trim()).filter(l => l !== '');
+if (plain.length === lines.length) parsed = plain;
+}
+// Validación de estructura: misma cantidad de líneas que el bloque enviado
+if (parsed.length === lines.length) {
+return parsed.join('\n');
+}
+throw new Error(`La IA devolvió ${parsed.length} líneas, se esperaban ${lines.length}`);
+}
+// ===================== ANÁLISIS DE VOCABULARIO =====================
+async function analyzeVocabulary(text) {
+loading.classList.add('show');
+vocabularySection.classList.remove('show');
+vocabMessages.innerHTML = '';
+try {
+if (!getApiKey()) {
+vocabMessages.innerHTML = '<div class="warning-msg">Configura tu API Key en la configuración (⚙) para analizar el vocabulario con IA.</div>';
+return;
+}
+const vocabulary = await analyzeWithAI(text);
+displayVocabulary(vocabulary);
+if (vocabulary.partial) {
+vocabMessages.innerHTML = '<div class="warning-msg">La respuesta de la IA se cortó en algún bloque; los resultados pueden estar incompletos.</div>';
+}
+} catch (error) {
+console.error('Error:', error);
+vocabMessages.innerHTML = '<div class="error-msg">Error al analizar: ' + error.message + '</div>';
+} finally {
+loading.classList.remove('show');
+}
+}
+// Analiza el texto (hasta 12000 caracteres) en bloques pequeños para que la respuesta de la IA no se corte
+async function analyzeWithAI(text) {
+const limited = text.length > 12000 ? text.substring(0, 12000) : text;
+const chunks = splitTextIntoChunks(limited, 4000);
+const merged = { verbs: [], adjectives: [], phrasalVerbs: [], items: [], slangs: [] };
+let partial = false;
+for (const chunk of chunks) {
+const part = await analyzeChunkWithAI(chunk);
+Object.keys(merged).forEach(key => merged[key].push(...part[key]));
+if (part.partial) partial = true;
+}
+return {
+verbs: countOccurrences(merged.verbs),
+adjectives: countOccurrences(merged.adjectives),
+phrasalVerbs: countOccurrences(merged.phrasalVerbs),
+items: countOccurrences(merged.items),
+slangs: countOccurrences(merged.slangs),
+partial
+};
+}
+async function analyzeChunkWithAI(text) {
+const baseUrl = (config.provider === 'custom' ? config.baseUrl : providerUrls[config.provider]).replace(/\/+$/, '');
+const apiKey = getApiKey();
+let model = config.model || providerModels[config.provider];
+if (config.provider === 'deepseek' && !['deepseek-flash', 'deepseek-v4-flash', 'deepseek-v4-pro'].includes(model.trim().toLowerCase())) {
+model = providerModels.deepseek;
+}
+if (config.provider === 'gemini' && /^gemini-(1\.|2\.)/i.test(model.trim())) {
+model = providerModels.gemini;
+}
+const isDeepseek = config.provider === 'deepseek';
+const truncatedText = text;
+const systemPrompt = `You are an expert English linguistics assistant. Analyze the user's English text and extract vocabulary with maximum precision.
+
+RULES:
+1. "verbs": ALL verbs found, converted to BASE FORM / INFINITIVE (e.g., "went" -> "go", "running" -> "run", "has eaten" -> "eat"). Lowercase, deduplicated.
+2. "adjectives": ALL adjectives AND ALL adverbs found (adverbs on purpose: words like "quickly", "very", "never", "suddenly"), in base form, lowercase, deduplicated. Normalize comparatives/superlatives ("bigger" -> "big").
+3. "phrasalVerbs": ONLY true phrasal verbs that actually appear in the text, in base form (e.g., "gave up" -> "give up", "looking for" -> "look for"). Do NOT invent any that are not present.
+4. "items": ONLY concrete, tangible, physical objects you can touch (ball, window, lamp, table, car, phone, sword...). Singular, lowercase, deduplicated. STRICTLY EXCLUDE abstract concepts (love, freedom, idea, time, hope, problem, way, thing, life), places, person names and organizations.
+5. "slangs": slang words and informal, everyday expressions that people actually use in casual conversation with friends or family. Include: informal contractions (gonna, wanna, gotta, kinda, lemme), interjections (yeah, wow, geez, damn), casual address words (dude, bro, buddy, man), colloquial intensifiers and mild swear words if present, and informal idiomatic phrases ("what's up", "no way", "my bad", "piece of cake", "come on"). Lowercase, deduplicated, in citation/base form (e.g., "freaked out" -> "freak out"). ONLY expressions that genuinely appear in the text. Do NOT include standard formal vocabulary.
+6. Every entry must appear only ONCE in its list. Never repeat an entry, and stop as soon as each list is complete.
+
+Return ONLY one valid JSON object. No markdown fences, no comments, no explanation. Exact structure:
+{"verbs":["..."],"adjectives":["..."],"phrasalVerbs":["..."],"items":["..."],"slangs":["..."]}`;
+const response = await fetchWithRetry(`${baseUrl}/chat/completions`, {
+method: 'POST',
+headers: {
+'Content-Type': 'application/json',
+'Authorization': `Bearer ${apiKey}`
+},
+body: JSON.stringify({
+model: model,
+messages: [
+{ role: 'system', content: systemPrompt },
+{ role: 'user', content: truncatedText }
+],
+temperature: 0.2,
+...(isDeepseek ? { max_tokens: 4000, thinking: { type: 'disabled' } } : {})
+})
+});
+if (!response.ok) {
+const errText = await response.text();
+const hints = {
+401: 'API Key inválida o mal copiada.',
+404: 'Modelo no encontrado: abre la configuración y pulsa "Ver modelos disponibles".',
+402: 'Saldo insuficiente en tu cuenta del proveedor.',
+429: 'Demasiadas solicitudes, espera un momento e intenta de nuevo.',
+503: 'El modelo está saturado en este momento; espera unos minutos o prueba con otro modelo.'
+};
+throw new Error(`API error ${response.status}${hints[response.status] ? ' (' + hints[response.status] + ')' : ''}: ${errText.substring(0, 200)}`);
+}
+const data = await response.json();
+const choice = data.choices[0];
+let content = choice.message.content || choice.message.reasoning_content || '';
+content = content.replace(/```json/gi, '').replace(/```/g, '').trim();
+let vocabulary = null;
+let partial = false;
+try {
+vocabulary = JSON.parse(content);
+} catch (e) {
+const jsonMatch = content.match(/\{[\s\S]*\}/);
+if (jsonMatch) {
+try { vocabulary = JSON.parse(jsonMatch[0]); } catch (e2) { vocabulary = null; }
+}
+if (!vocabulary) {
+vocabulary = repairTruncatedJson(content);
+partial = !!vocabulary;
+}
+if (!vocabulary) {
+throw new Error(`La IA no devolvió un JSON válido (motivo de fin: ${choice.finish_reason || 'desconocido'}). Respuesta recibida: "${content.substring(0, 150)}"`);
+}
+}
+const onlyStrings = arr => Array.isArray(arr) ? arr.filter(x => typeof x === 'string') : [];
+return {
+verbs: onlyStrings(vocabulary.verbs),
+adjectives: onlyStrings(vocabulary.adjectives),
+phrasalVerbs: onlyStrings(vocabulary.phrasalVerbs),
+items: onlyStrings(vocabulary.items),
+slangs: onlyStrings(vocabulary.slangs),
+partial
+};
+}
+// Rescata lo que se pueda de un JSON que la IA dejó cortado a la mitad
+function repairTruncatedJson(content) {
+const start = content.indexOf('{');
+if (start < 0) return null;
+const s = content.slice(start);
+const lastComma = s.lastIndexOf('",');
+const lastClose = s.lastIndexOf('"]');
+let candidate;
+if (lastClose > lastComma) {
+candidate = s.slice(0, lastClose + 2) + '}';
+} else if (lastComma >= 0) {
+candidate = s.slice(0, lastComma + 1) + ']}';
+} else {
+return null;
+}
+try { return JSON.parse(candidate); } catch (e) { return null; }
+}
+function cleanWord(word) {
+return word
+.replace(/^[-\s]+/, '')
+.replace(/[-\s]+$/, '')
+.replace(/[.,!?;:'"“”(){}[\]]+$/g, '')
+.replace(/^[.,!?;:'"“”(){}[\]]+/g, '')
+.trim()
+.toLowerCase();
+}
+function countOccurrences(arr) {
+const counts = {};
+arr.forEach(item => {
+const cleaned = cleanWord(item);
+if (cleaned && cleaned.length > 0) {
+counts[cleaned] = (counts[cleaned] || 0) + 1;
+}
+});
+return Object.entries(counts)
+.map(([word, count]) => ({ word, count }));
+}
+function displayVocabulary(vocabulary) {
+displayVocabTable('verbs', vocabulary.verbs);
+displayVocabTable('adjectives', vocabulary.adjectives);
+displayVocabTable('phrasalVerbs', vocabulary.phrasalVerbs);
+displayVocabTable('items', vocabulary.items);
+displayVocabTable('slangs', vocabulary.slangs);
+vocabularySection.classList.add('show');
+}
+function displayVocabTable(id, data) {
+const container = document.getElementById(id);
+if (!data || data.length === 0) {
+container.innerHTML = '<div class="no-data">No se encontraron elementos en esta categoría</div>';
+return;
+}
+const sortedData = [...data].sort((a, b) => a.word.localeCompare(b.word));
+let html = '<table class="vocab-table"><thead><tr><th>Palabra</th><th style="text-align:center;">Apariciones</th></tr></thead><tbody>';
+sortedData.forEach(item => {
+const wordDisplay = item.word;
+const wordForSearch = encodeURIComponent(item.word);
+const wrUrl = `https://www.wordreference.com/es/translation.asp?tranword=${wordForSearch}`;
+html += `<tr><td><a href="${wrUrl}" target="_blank" rel="noopener" class="word-link" title="Clic para ver traducción en WordReference">${wordDisplay}</a></td><td class="count">${item.count}</td></tr>`;
+});
+html += '</tbody></table>';
+container.innerHTML = html;
+}
+function showVocabTab(tabId, btn) {
+document.querySelectorAll('.vocab-tab').forEach(tab => tab.classList.remove('active'));
+document.querySelectorAll('.vocab-content').forEach(content => content.classList.remove('active'));
+btn.classList.add('active');
+document.getElementById(tabId).classList.add('active');
+}
+function openSettings() {
+loadConfig();
+const prov = config.provider || 'openai';
+document.getElementById('provider').value = prov;
+document.getElementById('baseUrl').value = config.baseUrl || '';
+document.getElementById('apiKey').value = (config.apiKeys && config.apiKeys[prov]) || '';
+document.getElementById('translationModel').value = config.translationModel || '';
+document.getElementById('settingsModal').classList.add('show');
+updateProviderConfig();
+}
+function closeSettings() {
+document.getElementById('settingsModal').classList.remove('show');
+}
+function updateProviderConfig() {
+const provider = document.getElementById('provider').value;
+const isSavedProvider = provider === config.provider;
+document.getElementById('modelList').style.display = 'none';
+document.getElementById('modelListStatus').textContent = '';
+document.getElementById('modelListTranslation').style.display = 'none';
+document.getElementById('modelListTranslationStatus').textContent = '';
+document.getElementById('apiKey').value =
+(config.apiKeys && config.apiKeys[provider]) ||
+(isSavedProvider ? (config.apiKey || '') : '');
+if (provider === 'custom') {
+document.getElementById('baseUrlGroup').style.display = 'block';
+document.getElementById('model').value = isSavedProvider ? (config.model || '') : '';
+} else {
+document.getElementById('baseUrlGroup').style.display = 'none';
+document.getElementById('model').value = (isSavedProvider && config.model) ? config.model : providerModels[provider];
+}
+injectModelSuggestions(provider);
+// Si ya hay clave, consultar en vivo los modelos disponibles del proveedor (ambos campos)
+const key = document.getElementById('apiKey').value.trim();
+if (key || provider === 'openrouter') {
+loadAvailableModels(true);
+loadAvailableModelsTranslation(true);
+}
+}
+// Inyecta <datalist> con sugerencias de modelos actuales para ambos campos de modelo
+function injectModelSuggestions(provider) {
+const ids = suggestedModels[provider] || [];
+const html = ids.map(id => `<option value="${id}"></option>`).join('');
+let dl = document.getElementById('modelSuggestions');
+if (!dl) {
+dl = document.createElement('datalist');
+dl.id = 'modelSuggestions';
+document.body.appendChild(dl);
+document.getElementById('model').setAttribute('list', 'modelSuggestions');
+}
+dl.innerHTML = html;
+let dl2 = document.getElementById('modelSuggestionsTranslation');
+if (!dl2) {
+dl2 = document.createElement('datalist');
+dl2.id = 'modelSuggestionsTranslation';
+document.body.appendChild(dl2);
+document.getElementById('translationModel').setAttribute('list', 'modelSuggestionsTranslation');
+}
+dl2.innerHTML = html;
+}
+// Consulta la lista real de modelos del proveedor (compartida por ambos campos)
+async function fetchAvailableModelIds(provider, apiKey, baseUrl) {
+const response = await fetch(`${baseUrl}/models`, {
+headers: apiKey ? { 'Authorization': `Bearer ${apiKey}` } : {}
+});
+if (!response.ok) {
+throw new Error(response.status === 401 || response.status === 403 ? 'API Key inválida' : `error ${response.status}`);
+}
+const data = await response.json();
+const items = Array.isArray(data) ? data : (data.data || data.models || []);
+return [...new Set(items
+.map(m => String(m.id || m.name || '').replace(/^models\//, ''))
+.filter(id => id && !/embed|tts|whisper|dall-e|image|moderation|audio|realtime|transcri|davinci|babbage|imagen|veo|rerank|guard/i.test(id))
+.filter(id => provider !== 'gemini' || !/^gemini-(1\.|2\.)/i.test(id))
+)].sort();
+}
+async function loadAvailableModels(auto = false) {
+const provider = document.getElementById('provider').value;
+const apiKey = document.getElementById('apiKey').value.trim();
+const status = document.getElementById('modelListStatus');
+const select = document.getElementById('modelList');
+const baseUrl = (provider === 'custom' ? document.getElementById('baseUrl').value.trim() : providerUrls[provider]).replace(/\/+$/, '');
+if (!baseUrl) {
+if (!auto) status.textContent = 'Escribe primero la URL base.';
+return;
+}
+if (!apiKey && provider !== 'openrouter') {
+if (!auto) status.textContent = 'Escribe primero tu API Key.';
+return;
+}
+status.textContent = 'Consultando modelos disponibles...';
+try {
+const ids = await fetchAvailableModelIds(provider, apiKey, baseUrl);
+if (ids.length === 0) throw new Error('el proveedor no devolvió modelos');
+const dl = document.getElementById('modelSuggestions');
+if (dl) dl.innerHTML = ids.map(id => `<option value="${id}"></option>`).join('');
+select.innerHTML = '';
+const first = document.createElement('option');
+first.value = '';
+first.textContent = `Selecciona un modelo (${ids.length} disponibles)`;
+select.appendChild(first);
+ids.forEach(id => {
+const opt = document.createElement('option');
+opt.value = id;
+opt.textContent = id;
+select.appendChild(opt);
+});
+select.style.display = 'block';
+const current = document.getElementById('model').value.trim();
+status.textContent = ids.includes(current)
+? `El modelo "${current}" está disponible ✓ (${ids.length} modelos encontrados)`
+: `Se encontraron ${ids.length} modelos disponibles. Elige uno de la lista.`;
+} catch (error) {
+console.error('Error al listar modelos:', error);
+select.style.display = 'none';
+status.textContent = auto
+? `Sugerencias estáticas activas (no se pudo verificar en vivo: ${error.message})`
+: `No se pudo obtener la lista de modelos: ${error.message}`;
+}
+}
+// Lista de modelos para el campo "Modelo de traducción" (mismo mecanismo, cualquier proveedor)
+async function loadAvailableModelsTranslation(auto = false) {
+const provider = document.getElementById('provider').value;
+const apiKey = document.getElementById('apiKey').value.trim();
+const status = document.getElementById('modelListTranslationStatus');
+const select = document.getElementById('modelListTranslation');
+const baseUrl = (provider === 'custom' ? document.getElementById('baseUrl').value.trim() : providerUrls[provider]).replace(/\/+$/, '');
+if (!baseUrl) {
+if (!auto) status.textContent = 'Escribe primero la URL base.';
+return;
+}
+if (!apiKey && provider !== 'openrouter') {
+if (!auto) status.textContent = 'Escribe primero tu API Key.';
+return;
+}
+status.textContent = 'Consultando modelos disponibles...';
+try {
+const ids = await fetchAvailableModelIds(provider, apiKey, baseUrl);
+if (ids.length === 0) throw new Error('el proveedor no devolvió modelos');
+const dl = document.getElementById('modelSuggestionsTranslation');
+if (dl) dl.innerHTML = ids.map(id => `<option value="${id}"></option>`).join('');
+select.innerHTML = '';
+const first = document.createElement('option');
+first.value = '';
+first.textContent = `Selecciona un modelo (${ids.length} disponibles)`;
+select.appendChild(first);
+ids.forEach(id => {
+const opt = document.createElement('option');
+opt.value = id;
+opt.textContent = id;
+select.appendChild(opt);
+});
+select.style.display = 'block';
+const current = document.getElementById('translationModel').value.trim();
+status.textContent = current
+? (ids.includes(current)
+? `El modelo "${current}" está disponible ✓`
+: `El modelo "${current}" no aparece en la lista. Elige uno de la lista o déjalo vacío para usar el modelo principal.`)
+: `Campo vacío = se usará el modelo principal. Hay ${ids.length} modelos disponibles.`;
+} catch (error) {
+console.error('Error al listar modelos de traducción:', error);
+select.style.display = 'none';
+status.textContent = auto
+? ''
+: `No se pudo obtener la lista de modelos: ${error.message}`;
+}
+}
+function selectModelFromList() {
+const value = document.getElementById('modelList').value;
+if (value) {
+document.getElementById('model').value = value;
+document.getElementById('modelListStatus').textContent = `Modelo seleccionado: ${value}`;
+}
+}
+function selectTranslationModelFromList() {
+const value = document.getElementById('modelListTranslation').value;
+if (value) {
+document.getElementById('translationModel').value = value;
+document.getElementById('modelListTranslationStatus').textContent = `Modelo seleccionado: ${value}`;
+}
+}
+function saveSettings() {
+config.provider = document.getElementById('provider').value;
+config.baseUrl = document.getElementById('baseUrl').value.trim().replace(/\/+$/, '');
+const key = document.getElementById('apiKey').value.trim();
+if (!config.apiKeys) config.apiKeys = {};
+config.apiKeys[config.provider] = key;
+config.apiKey = key; // compatibilidad hacia atrás
+config.model = document.getElementById('model').value.trim() || providerModels[config.provider] || '';
+config.translationModel = document.getElementById('translationModel').value.trim();
+localStorage.setItem('srtExtractorConfig', JSON.stringify(config));
+alert('Configuración guardada correctamente');
+closeSettings();
+}
+function downloadAsMarkdown() {
+let markdownContent = `# Subtítulos Extraídos
+
+${numberSubtitles(extractedText)}`;
+if (translatedTextContent) {
+markdownContent += `
+
+---
+
+# Traducción al Español
+
+${numberSubtitles(translatedTextContent)}`;
+}
+const blob = new Blob([markdownContent], { type: 'text/markdown;charset=utf-8' });
+const url = URL.createObjectURL(blob);
+const a = document.createElement('a');
+a.href = url;
+a.download = 'subtitulos.md';
+document.body.appendChild(a);
+a.click();
+document.body.removeChild(a);
+URL.revokeObjectURL(url);
+}
+function downloadAsPDF() {
+const { jsPDF } = window.jspdf;
+const doc = new jsPDF();
+const pageWidth = doc.internal.pageSize.getWidth();
+const pageHeight = doc.internal.pageSize.getHeight();
+const margin = 20;
+const maxWidth = pageWidth - (margin * 2);
+let yPosition = margin;
+doc.setFontSize(20);
+doc.setFont(undefined, 'bold');
+doc.text('Subtítulos Extraídos', margin, yPosition);
+yPosition += 15;
+doc.setLineWidth(0.5);
+doc.line(margin, yPosition, pageWidth - margin, yPosition);
+yPosition += 10;
+doc.setFontSize(11);
+doc.setFont(undefined, 'normal');
+if (translatedTextContent) {
+const gap = 10;
+const colWidth = (maxWidth - gap) / 2;
+const xEn = margin;
+const xEs = margin + colWidth + gap;
+doc.setFontSize(13);
+doc.setFont(undefined, 'bold');
+doc.text('Inglés', xEn, yPosition);
+doc.text('Español', xEs, yPosition);
+yPosition += 8;
+doc.setFontSize(11);
+doc.setFont(undefined, 'normal');
+const enParagraphs = extractedText.split('\n');
+const esParagraphs = translatedTextContent.split('\n');
+const sameStructure = enParagraphs.length === esParagraphs.length;
+const drawRows = (enLines, esLines) => {
+const total = Math.max(enLines.length, esLines.length);
+for (let k = 0; k < total; k++) {
+if (yPosition > pageHeight - margin) {
+doc.addPage();
+yPosition = margin;
+}
+if (enLines[k] !== undefined) doc.text(enLines[k], xEn, yPosition);
+if (esLines[k] !== undefined) doc.text(esLines[k], xEs, yPosition);
+yPosition += 6;
+}
+};
+if (sameStructure) {
+for (let p = 0; p < enParagraphs.length; p++) {
+drawRows(
+doc.splitTextToSize(`${p + 1}. ${enParagraphs[p].trim()}`, colWidth),
+doc.splitTextToSize(`${p + 1}. ${esParagraphs[p].trim()}`, colWidth)
+);
+yPosition += 6;
+}
+} else {
+drawRows(
+doc.splitTextToSize(numberSubtitles(extractedText), colWidth),
+doc.splitTextToSize(numberSubtitles(translatedTextContent), colWidth)
+);
+}
+} else {
+const lines = doc.splitTextToSize(numberSubtitles(extractedText), maxWidth);
+for (let i = 0; i < lines.length; i++) {
+if (yPosition > pageHeight - margin) {
+doc.addPage();
+yPosition = margin;
+}
+doc.text(lines[i], margin, yPosition);
+yPosition += 6;
+}
+}
+doc.save('subtitulos.pdf');
+}
+// Al escribir una API Key: se asocia al proveedor actual y se consultan sus modelos
+document.getElementById('apiKey').addEventListener('change', function () {
+const provider = document.getElementById('provider').value;
+if (!config.apiKeys) config.apiKeys = {};
+config.apiKeys[provider] = this.value.trim();
+loadAvailableModels(true);
+loadAvailableModelsTranslation(true);
+});
+loadConfig();
+</script>
+</body>
+</html>
